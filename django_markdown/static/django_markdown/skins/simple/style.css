@@ -17,11 +17,9 @@
 }
 .markItUpContainer  {
     overflow: visible;
-	font:11px Verdana, Arial, Helvetica, sans-serif;
 }
 .markItUpEditor {
     overflow: visible;
-	font:12px 'Courier New', Courier, monospace;
 	padding:5px;
 	width:96%;
 	clear:both; display:block;
