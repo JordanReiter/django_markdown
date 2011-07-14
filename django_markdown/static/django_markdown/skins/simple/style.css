@@ -16,11 +16,11 @@
 	margin:5px 0 5px 0;
 }
 .markItUpContainer  {
-    overflow: hidden;
+    overflow: visible;
 	font:11px Verdana, Arial, Helvetica, sans-serif;
 }
 .markItUpEditor {
-    overflow: hidden;
+    overflow: visible;
 	font:12px 'Courier New', Courier, monospace;
 	padding:5px;
 	width:96%;
@@ -120,5 +120,5 @@
 .markdown {
     float:left; 
     margin: 2px 0 10px 2%;
-    overflow: auto;
+    overflow: visible;
 }
