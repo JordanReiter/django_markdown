@@ -118,3 +118,6 @@
 	color:#FFF;
 	background-color:#000;
 }
+.markdown {
+    overflow: auto;
+}
