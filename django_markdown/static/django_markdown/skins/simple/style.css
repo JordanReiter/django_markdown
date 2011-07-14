@@ -118,5 +118,7 @@
 	background-color:#000;
 }
 .markdown {
+    float:left; 
+    margin: 2px 0 10px 2%;
     overflow: auto;
 }
