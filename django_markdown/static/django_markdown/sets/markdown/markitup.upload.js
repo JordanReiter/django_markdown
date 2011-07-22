@@ -117,6 +117,7 @@ MarkdownUpload = {
 		$upload_label.append($upload_input);
 		$alt_label.append($alt_input);
 		$("<small>").html(" (optional)").insertAfter($alt_input);
+		$upload_form.append($img_preview);
 		$upload_form.append($upload_label);
 		$upload_form.append($url_label);
 		$upload_form.append($alt_label);
