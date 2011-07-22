@@ -108,8 +108,9 @@ jQuery.extend({
                         // Fire the global callback
                         if( s.global )
                             jQuery.event.trigger( "ajaxSuccess", [xml, s] );
-                    } else
-//                        jQuery.handleError(s, xml, status);
+                    } else {
+//                        jQuery.handleError(s, xml, status);						
+					}
                 } catch(e) 
 				{
                     status = "error";
