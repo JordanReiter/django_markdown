@@ -46,7 +46,7 @@ MarkdownUpload = {
 	},
 	fileDialog: function(markItUp) {
 		var markItUp = markItUp,
-			triggerInsert = function () {
+			triggerInsert = function (event) {
 				var url = $url_input.val(),
 					result = "[",
 					title = null,
@@ -55,6 +55,8 @@ MarkdownUpload = {
 				if (!label.trim().length) {
 					label = filename;
 				}
+				event.stopPropagation();
+				event.preventDefault();
 				return markItUp.selection + '[' + label + '](' + url + ' "File: ' + filename + '")';
 			},
 			$upload_form = $('<form enctype="multipart/form-data">')
@@ -64,7 +66,7 @@ MarkdownUpload = {
 			$url_label = $('<label>').html("Image URL :"),
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
 				.change(UploadFile),
-			$insert_button = $('<input type="submit" value="Insert" />').change(triggerInsert),
+			$insert_button = $('<input type="submit" value="Insert" />').change(this.triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
 		$upload_label.append($upload_input);
@@ -82,10 +84,10 @@ MarkdownUpload = {
 			triggerInsert = function (event) {
 				var alt_text= $alt_input.val(),
 					url = $url_input.val();
-		        $(this.markItUp.textarea).trigger('insertion', 
-		            [{replaceWith: markItUp.selection + '![' + url + '](' + data.url + ')'}]);
 				event.stopPropagation();
 				event.preventDefault();
+		        $(this.markItUp.textarea).trigger('insertion', 
+		            [{replaceWith: markItUp.selection + '![' + url + '](' + data.url + ')'}]);
 				return false;
 			},
 			$upload_form = $('<form enctype="multipart/form-data">')
@@ -105,7 +107,7 @@ MarkdownUpload = {
 				}),
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
 				.change(UploadFile),
-			$insert_button = $('<input type="submit" value="Insert" />').change(triggerInsert),
+			$insert_button = $('<input type="submit" value="Insert" />').change(this.triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
 		$upload_label.append($upload_input);
