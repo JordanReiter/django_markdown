@@ -51,13 +51,13 @@ def upload(request, path="uploads"):
             except ValueError:
                 return HttpResponseBadRequest("This usually only happens when you supply an invalid value for the path.")
             try:
-                destination_path = '%s/%s/%s' % (destination_folder, uploaded_file.name)
+                destination_path = '%s/%s' % (destination_folder, uploaded_file.name)
                 destination = open(destination_path, 'wb+')
                 for chunk in uploaded_file.chunks():
                     destination.write(chunk)
                 destination.close()
             except Exception, inst:
-                raise Exception("Some kind of error: %s" % (repr(inst),))
+                raise Exception("Some kind of error: %s" % inst)
 
             data = {
                 'file': uploaded_file.name,
