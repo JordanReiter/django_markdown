@@ -33,7 +33,7 @@ function UploadFile(event) {
 
 MarkdownUpload = {
 	updateForm: function(form, data) {
-		var $preview=$(form).find('#med-image-preview');
+		var $preview=$(form).find('#md-image-preview');
 		$(form).find("#md-upload-url").val(data.url);
 		if ($preview.length) {
 			$('<img src="' + data.url + '">')
