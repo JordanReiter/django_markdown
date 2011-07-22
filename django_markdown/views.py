@@ -57,7 +57,7 @@ def upload(request, path="uploads"):
                     destination.write(chunk)
                 destination.close()
             except Exception, inst:
-                raise Exception("Some kind of error: %s" % repr(inst))
+                raise Exception("Some kind of error: %s" % (repr(inst),))
 
             data = {
                 'file': uploaded_file.name,
