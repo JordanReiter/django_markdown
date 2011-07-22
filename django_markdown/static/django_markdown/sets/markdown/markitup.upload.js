@@ -55,9 +55,12 @@ MarkdownUpload = {
 				if (!label.trim().length) {
 					label = filename;
 				}
+		        $(markItUp.textarea).trigger('insertion', 
+		            [{replaceWith: '[' + label + '](' + url + ' "File: ' + filename + '")'}]);
 				event.stopPropagation();
 				event.preventDefault();
-				return markItUp.selection + '[' + label + '](' + url + ' "File: ' + filename + '")';
+ 				$upload_form.remove()
+				return false;
 			},
 			$upload_form = $('<form enctype="multipart/form-data">')
 				.addClass('md-upload-dialog')
