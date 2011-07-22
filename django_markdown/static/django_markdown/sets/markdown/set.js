@@ -30,7 +30,7 @@ mySettings = {
 		}},
 		{separator:'---------------' },
 		{name:'Picture', key:'P', replaceWith: function(miu) { MarkdownUpload.imageDialog(miu) }},
-//		{name:'File', className:"file", replaceWith: function(miu) { MarkdownUpload.fileDialog(miu) }},
+		{name:'File', className:"file", replaceWith: function(miu) { MarkdownUpload.fileDialog(miu) }},
 		{name:'Link', key:'L', openWith:'[', closeWith:']([![Url:!:http://]!] "[![Title]!]")', placeHolder:'Your text to link here...' },
 		{separator:'---------------'},	
 		{name:'Quotes', openWith:'> '},
