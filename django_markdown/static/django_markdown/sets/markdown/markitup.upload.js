@@ -101,8 +101,7 @@ MarkdownUpload = {
 			$url_label = $('<label>').html("Image URL :"),
 			$alt_input = $('<input type="text" name="alt" id="md-upload-alt" />'),
 			$alt_label = $('<label>').html("Alt text:"),
-			$img_preview = $('<div id="md-image-preview">').css({
-					"float": 'right',
+			$img_preview = $('<div id="md-image-preview">').css('float','right').css({
 					background: '#ccc',
 					border: '1px solid black',
 					width: '200px',
