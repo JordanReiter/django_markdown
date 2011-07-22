@@ -30,7 +30,7 @@ function UploadFile(event) {
 }
 
 MarkdownUpload = {
-	updateForm(form, data) {
+	updateForm: function(form, data) {
 		var $preview=$(form).find('#med-image-preview');
 		$(form).find("#md-upload-url").val(data.url);
 		if ($preview.length) {
@@ -86,14 +86,13 @@ MarkdownUpload = {
 			$url_label = $('<label>').html("Image URL :"),
 			$alt_input = $('<input type="text" name="alt" id="md-upload-alt" />'),
 			$alt_label = $('<label>').html("Alt text:"),
-			$img_preview = $('<div id="md-image-preview">')
-				.css({
+			$img_preview = $('<div id="md-image-preview">').css({
+					"float": 'right',
 					background: '#ccc',
 					border: '1px solid black',
 					width: '200px',
 					padding: '5px',
-					marginLeft: '10px',
-					float: 'right',
+					marginLeft: '10px'
 				}),
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
 				.change(UploadFile),
