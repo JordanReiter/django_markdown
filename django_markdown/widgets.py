@@ -34,8 +34,14 @@ class MarkdownWidget(forms.Textarea):
             upload_url = reverse('django_markdown_upload_with_path', kwargs={'path': upload_path})
         else:
             upload_url = reverse('django_markdown_upload')
-        upload_js = '\nMD_UPLOAD_URL="%s";' % upload_url
 
-        html += '<script type="text/javascript">$(\'#%s\').markItUp(%s);%s</script>' % (attrs['id'], simplejson.dumps(editor_settings), upload_js)
+        html += """
+<script type="text/javascript">
+dmd_miu_settings=mySettings;
+dmd_miu_settings['previewParserPath']="%s";
+$(\'#%s\').markItUp(dmd_miu_settings);
+MD_UPLOAD_URL=%s;
+</script>
+""" % (attrs['id'], reverse('django_markdown_preview'), upload_url)
 
         return mark_safe(html)
