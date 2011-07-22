@@ -105,6 +105,7 @@ MarkdownUpload = {
 					background: '#ccc',
 					border: '1px solid black',
 					width: '200px',
+					height: '200px',
 					padding: '5px',
 					marginLeft: '10px'
 				}),
