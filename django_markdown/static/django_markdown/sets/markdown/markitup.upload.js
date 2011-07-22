@@ -80,7 +80,7 @@ MarkdownUpload = {
 		$upload_form.append($alt_label);
 		$upload_form.append($insert_button);
 		$upload_form.appendTo('body');
-		$upload_form.dialog({ modal: true, width: 500 });
+		$upload_form.dialog({ modal: true, width: 650 });
 	},
 	imageDialog: function(markItUp) {
 		var markItUp = markItUp,
@@ -123,6 +123,6 @@ MarkdownUpload = {
 		$upload_form.append($("<p>").append($alt_label));
 		$upload_form.append($("<p>").append($insert_button));
 		$upload_form.appendTo('body');
-		$upload_form.dialog({ modal: true, width: 500 });
+		$upload_form.dialog({ modal: true, width: 650 });
 	}
 }
