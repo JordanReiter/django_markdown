@@ -3,6 +3,8 @@ from django.shortcuts import render_to_response
 from django.views.generic.simple import direct_to_template
 from django.conf import settings
 from django.core.files.storage import safe_join
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 #try:
 #    import json
 #except ImportError:
@@ -33,6 +35,8 @@ def manual(request):
         # show the upload UI
         return render_to_response('uploads/manual.html')
 
+@csrf_exempt
+@login_required
 def upload(request, path="uploads"):
     if request.method == 'POST':
         path = request.POST('path', path)
@@ -46,11 +50,14 @@ def upload(request, path="uploads"):
                 destination_folder = safe_join(settings.MEDIA_ROOT, path)
             except ValueError:
                 return HttpResponseBadRequest("This usually only happens when you supply an invalid value for the path.")
-            destination_path = '%s/%s/%s' % (destination_folder, uploaded_file.name)
-            destination = open(destination_path, 'wb+')
-            for chunk in uploaded_file.chunks():
-                destination.write(chunk)
-            destination.close()
+            try:
+                destination_path = '%s/%s/%s' % (destination_folder, uploaded_file.name)
+                destination = open(destination_path, 'wb+')
+                for chunk in uploaded_file.chunks():
+                    destination.write(chunk)
+                destination.close()
+            except Exception, inst:
+                raise Exception("Some kind of error: %s" % inst)
 
             data = {
                 'file': uploaded_file.name,
