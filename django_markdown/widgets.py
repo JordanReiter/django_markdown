@@ -4,18 +4,21 @@ from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
 from django.utils import simplejson
 
-
 class MarkdownWidget(forms.Textarea):
 
+    def __init__(self, *args, **kwargs):
+        self.path = kwargs.pop('path', None)
+        super(MarkdownWidget, self).__init__(*args, **kwargs)
+    
     class Media:
         js = (
             ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/jquery.markitup.js',
-            ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/markdown.js',
+            ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/sets/markdown/set.js',
+            ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/sets/markdown/markitup.upload.js',
         )
         css = {
             'screen': (
-                ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/skins/%s/style.css' % getattr(settings, 'MARKDOWN_EDITOR_SKIN', 'markitup'),
-                ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/markdown.css',
+                ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/sets/markdown/style.css',
             )
         }
 
@@ -25,6 +28,13 @@ class MarkdownWidget(forms.Textarea):
         editor_settings = getattr(settings, 'MARKDOWN_EDITOR_SETTINGS', {})
         editor_settings['previewParserPath'] = reverse('django_markdown_preview')
 
-        html += '<script type="text/javascript">miu.init(\'%s\', %s)</script>' % (attrs['id'], simplejson.dumps(editor_settings))
+        upload_path = self.path or getattr(settings, 'MARKDOWN_UPLOAD_PATH', None)
+        if upload_path:
+            upload_url = reverse('django_markdown_upload_with_path', kwargs={'path': upload_path})
+        else:
+            upload_url = reverse('django_markdown_upload')
+        upload_js = '\nMD_UPLOAD_URL="%s";' % upload_url
+
+        html += '<script type="text/javascript">miu.init(\'%s\', %s);%s</script>' % (attrs['id'], simplejson.dumps(editor_settings), upload_js)
 
         return mark_safe(html)
