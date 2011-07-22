@@ -66,7 +66,7 @@ MarkdownUpload = {
 			$url_label = $('<label>').html("Image URL :"),
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
 				.change(UploadFile),
-			$insert_button = $('<input type="submit" value="Insert" />').change(this.triggerInsert),
+			$insert_button = $('<input type="submit" value="Insert" />').click(triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
 		$upload_label.append($upload_input);
@@ -82,12 +82,13 @@ MarkdownUpload = {
 	imageDialog: function(markItUp) {
 		var markItUp = markItUp,
 			triggerInsert = function (event) {
-				var alt_text= $alt_input.val(),
+				var alt_text= $alt_input.val() || "",
 					url = $url_input.val();
+		        $(markItUp.textarea).trigger('insertion', 
+		            [{replaceWith: markItUp.selection + '![' + alt_text + '](' + url + ')'}]);
 				event.stopPropagation();
 				event.preventDefault();
-		        $(this.markItUp.textarea).trigger('insertion', 
-		            [{replaceWith: markItUp.selection + '![' + url + '](' + data.url + ')'}]);
+ 				$upload_form.remove()
 				return false;
 			},
 			$upload_form = $('<form enctype="multipart/form-data">')
@@ -107,7 +108,7 @@ MarkdownUpload = {
 				}),
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
 				.change(UploadFile),
-			$insert_button = $('<input type="submit" value="Insert" />').change(this.triggerInsert),
+			$insert_button = $('<input type="submit" value="Insert" />').click(triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
 		$upload_label.append($upload_input);
