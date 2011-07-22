@@ -67,6 +67,6 @@ def upload(request, path="uploads"):
             } 
 
             # indicate that everything is OK for SWFUpload
-            return HttpResponse(json.dumps(data), content_type='application/json')
+            return HttpResponse(json.dumps(data))
     else:
         return HttpResponseNotAllowed("Only allowed to POST items.")
