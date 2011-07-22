@@ -88,6 +88,7 @@ jQuery.extend({
 				}						
             }catch(e)
 			{
+				alert(e);
 //				jQuery.handleError(s, xml, null, e);
 			}
             if ( xml || isTimeout == "timeout") 
@@ -139,6 +140,7 @@ jQuery.extend({
 											
 										} catch(e) 
 										{
+											alert(e);
 //											jQuery.handleError(s, xml, null, e);
 										}									
 
@@ -175,6 +177,7 @@ jQuery.extend({
 
         } catch(e) 
 		{			
+				alert(e);
 //            jQuery.handleError(s, xml, null, e);
         }
 		
