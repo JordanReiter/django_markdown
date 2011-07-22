@@ -40,7 +40,7 @@ class MarkdownWidget(forms.Textarea):
 dmd_miu_settings=mySettings;
 dmd_miu_settings['previewParserPath']="%s";
 $(\'#%s\').markItUp(dmd_miu_settings);
-MD_UPLOAD_URL=%s;
+MD_UPLOAD_URL="%s";
 </script>
 """ % (attrs['id'], reverse('django_markdown_preview'), upload_url)
 
