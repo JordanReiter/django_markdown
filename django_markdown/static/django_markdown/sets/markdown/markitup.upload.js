@@ -1,5 +1,6 @@
 function UploadFile(event) {
-	$form = $(this.form);
+	var $form = $(this.form);
+//	alert("About to upload a file : " + this.name) + ' to ' + $form.attr('action');
 	$.ajaxFileUpload
 	(
 		{
@@ -9,6 +10,7 @@ function UploadFile(event) {
 			dataType: 'json',
 			success: function (data, status)
 			{
+				MarkdownUpload.updateForm($form, data);
 				//alert("The data is "+data);
 				if(typeof(data.error) != 'undefined')
 				{
@@ -71,6 +73,7 @@ MarkdownUpload = {
 		$upload_form.append($upload_label);
 		$upload_form.append($url_label);
 		$upload_form.append($alt_label);
+		$upload_form.append($insert_button);
 		$upload_form.appendTo('body');
 		$upload_form.dialog({ modal: true });
 	},
@@ -111,6 +114,7 @@ MarkdownUpload = {
 		$upload_form.append($upload_label);
 		$upload_form.append($url_label);
 		$upload_form.append($alt_label);
+		$upload_form.append($insert_button);
 		$upload_form.appendTo('body');
 		$upload_form.dialog({ modal: true });
 	}
