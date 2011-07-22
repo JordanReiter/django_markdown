@@ -39,7 +39,7 @@ def manual(request):
 @login_required
 def upload(request, path="uploads"):
     if request.method == 'POST':
-        path = request.POST('path', path)
+        path = request.POST.get('path', path)
         if len(request.FILES) != 1:
             return HttpResponseBadRequest("Must upload one and only file at a time.")
         for field_name in request.FILES:
