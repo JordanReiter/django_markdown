@@ -88,7 +88,7 @@ jQuery.extend({
 				}						
             }catch(e)
 			{
-				alert(e);
+//				alert(e);
 //				jQuery.handleError(s, xml, null, e);
 			}
             if ( xml || isTimeout == "timeout") 
@@ -140,7 +140,7 @@ jQuery.extend({
 											
 										} catch(e) 
 										{
-											alert(e);
+//											alert(e);
 //											jQuery.handleError(s, xml, null, e);
 										}									
 
@@ -177,7 +177,7 @@ jQuery.extend({
 
         } catch(e) 
 		{			
-				alert(e);
+//				alert(e);
 //            jQuery.handleError(s, xml, null, e);
         }
 		
@@ -189,6 +189,7 @@ jQuery.extend({
     uploadHttpData: function( r, type ) {
         var data = !type;
         data = type == "xml" || data ? r.responseXML : r.responseText;
+		
         // If the type is "script", eval it in global context
         if ( type == "script" )
             jQuery.globalEval( data );

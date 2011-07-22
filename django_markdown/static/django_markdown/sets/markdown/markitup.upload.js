@@ -9,7 +9,7 @@ function UploadFile(event) {
 			dataType: 'json',
 			success: function (data, status)
 			{
-				alert(data.name);
+				//alert("The data is "+data);
 				if(typeof(data.error) != 'undefined')
 				{
 					if(data.error != '')
@@ -43,7 +43,8 @@ MarkdownUpload = {
 		}
 	},
 	fileDialog: function(markItUp) {
-		var replaceWith = function () {
+		var markItUp = markItUp,
+			triggerInsert = function () {
 				var url = $url_input.val(),
 					result = "[",
 					title = null,
@@ -61,7 +62,7 @@ MarkdownUpload = {
 			$url_label = $('<label>').html("Image URL :"),
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
 				.change(UploadFile),
-			$insert_button = $('<input type="submit" value="Insert" />').change(replaceWith),
+			$insert_button = $('<input type="submit" value="Insert" />').change(triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
 		$upload_label.append($upload_input);
@@ -74,10 +75,15 @@ MarkdownUpload = {
 		$upload_form.dialog({ modal: true });
 	},
 	imageDialog: function(markItUp) {
-		var replaceWith = function () {
+		var markItUp = markItUp,
+			triggerInsert = function (event) {
 				var alt_text= $alt_input.val(),
 					url = $url_input.val();
-				return markItUp.selection + '![' + url + '](' + data.url + ')';
+		        $(this.markItUp.textarea).trigger('insertion', 
+		            [{replaceWith: markItUp.selection + '![' + url + '](' + data.url + ')'}]);
+				event.stopPropagation();
+				event.preventDefault();
+				return false;
 			},
 			$upload_form = $('<form enctype="multipart/form-data">')
 				.addClass('md-upload-dialog')
@@ -96,7 +102,7 @@ MarkdownUpload = {
 				}),
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
 				.change(UploadFile),
-			$insert_button = $('<input type="submit" value="Insert" />').change(replaceWith),
+			$insert_button = $('<input type="submit" value="Insert" />').change(triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
 		$upload_label.append($upload_input);
