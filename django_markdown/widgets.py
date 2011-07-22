@@ -42,6 +42,6 @@ dmd_miu_settings['previewParserPath']="%s";
 $(\'#%s\').markItUp(dmd_miu_settings);
 MD_UPLOAD_URL="%s";
 </script>
-""" % (attrs['id'], reverse('django_markdown_preview'), upload_url)
+""" % (reverse('django_markdown_preview'), attrs['id'], upload_url)
 
         return mark_safe(html)
