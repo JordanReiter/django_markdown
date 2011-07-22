@@ -73,11 +73,8 @@ MarkdownUpload = {
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
 		$upload_label.append($upload_input);
-		$alt_label.append($alt_input);
-		$("<small>").html(" (optional)").insertAfter($alt_input);
 		$upload_form.append($upload_label);
 		$upload_form.append($url_label);
-		$upload_form.append($alt_label);
 		$upload_form.append($insert_button);
 		$upload_form.appendTo('body');
 		$upload_form.dialog({ modal: true, width: 650 });
