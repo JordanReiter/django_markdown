@@ -168,7 +168,7 @@ MarkdownUpload = {
 				.attr('action', MD_UPLOAD_URL),
 			$url_input = $('<input type="text" name="url" id="md-upload-url" />')
 				.change(function () { updateForm(this) }),
-			$url_label = $('<label>').html("Image URL :"),
+			$url_label = $('<label>').html("File URL :"),
 			$title_input = $('<input type="text" name="title" id="md-upload-title" />'),
 			$title_label = $('<label>').html("Title:"),
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
