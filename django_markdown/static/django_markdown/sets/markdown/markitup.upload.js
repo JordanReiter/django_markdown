@@ -41,7 +41,7 @@ function bytesToSize(bytes, precision)
 	}
    
     if ((bytes >= 0) && (bytes < kilobyte)) {
-        return bytes + ' B';
+        return bytes + ' bytes';
  
     } else if ((bytes >= kilobyte) && (bytes < megabyte)) {
         return (bytes / kilobyte).toFixed(precision) + ' KB';
@@ -62,8 +62,9 @@ function bytesToSize(bytes, precision)
 
 
 function UploadFile(event) {
-	var $form = $(this.form);
-//	alert("About to upload a file : " + this.name) + ' to ' + $form.attr('action');
+	var $form = $(this.form),
+	    $el = $(this),
+	    old_id = $el.attr('id');
 	$.ajaxFileUpload
 	(
 		{
@@ -73,8 +74,10 @@ function UploadFile(event) {
 			dataType: 'json',
 			success: function (data, status)
 			{
+//				alert("About to replace "+$el+" which has an id of "+$el.attr('id')+" and is a " + $el[0].nodeName);
+                     		$el = $form.find(":input[name='file']");
+				$el.replaceWith('<input id="md-upload-file" type="file" name="file" />');
 				MarkdownUpload.updateUrl($form, data);
-				//alert("The data is "+data);
 				if(typeof(data.error) != 'undefined')
 				{
 					if(data.error != '')
@@ -91,57 +94,54 @@ function UploadFile(event) {
 				alert(e);
 			}
 		}
-	)
+	);
 }
 
 MarkdownUpload = {
 	updateUrl: function(form, data) {
 		var $preview=$(form).find('#md-image-preview'),
-			$title=$(form).find("input[name='title']"),
+			$title=$(form).find(":input[name='title']"),
 			title = "";
 		$(form).find("#md-upload-url").val(data.url);
-//		title = "File: data.file"
-//		if (data.size) {
-//			title += " [" + bytesToSize(data.size) + "]";
-//		}
-//		if ($preview.length) {
-//			$('<img src="' + data.url + '">')
-//				.css({
-//					maxWidth: '200px',
-//					maxHeight: '200px'
-//				})
-//				.appendTo($preview);
-//		}
-//		$title.val(title);
-		updateForm(form, data.url, data.size);
+		MarkdownUpload.updateForm(form, data.url, data.size);
 	},
 	updateForm: function(form, url, size) {
-		var size={},
+		var size_holder={},
 			$form = $(form)
 			$preview=$(form).find('#md-image-preview'),
-			$title=$(form).find("input[name='title']"),
+			$file_info=$(form).find('#md-file-info'),
+			$title=$(form).find(":input[name='title']"),
+			filename = "",
 			title = "";
 		if (!url) {
-			url = $form.find("input[name='url']").val();
+			url = $form.find(":input[name='url']").val();
 		}
+		filename = url.split('/').pop();
 		if ($preview.length) {
 			$('<img src="' + data.url + '">')
 				.css({
 					maxWidth: '200px',
 					maxHeight: '200px'
 				})
-				.appendTo($preview);
+				.appendTo($preview.empty());
+		}
+		if ($file_info.length) {
+			$("<a>").attr("href", url)
+				.attr('target','_blank')
+				.html(filename)
+				.addClass('file-link')
+				.appendTo($file_info.empty());
 		}
 		if ($title.length) {
-			title = "File: " + url.split('/').pop();
+			title = "File: " + filename;
 			if (!size) {
-				getSizeAsync(url, size, "value", function () {
-					$(title).val(title + " [" + bytesToSize + "]");
+				getSizeAsync(url, size_holder, "value", function () {
+					$(title).val(title + " [" + bytesToSize(size) + "]");
 				});
 			} else {
 				title += " [" + bytesToSize(size) + "]";
 			}
-			$(title).val(title);
+			$title.val(title);
 		}
 	},
 	fileDialog: function(markItUp) {
@@ -155,7 +155,7 @@ MarkdownUpload = {
 				if (!label.trim().length) {
 					label = filename;
 				}
-				title = $upload_form.find("input[name='title']").val();
+				title = $upload_form.find(":input[name='title']").val();
 		        $(markItUp.textarea).trigger('insertion', 
 		            [{replaceWith: '[' + label + '](' + url + ' "' + title + '")'}]);
 				event.stopPropagation();
@@ -166,23 +166,30 @@ MarkdownUpload = {
 			$upload_form = $('<form enctype="multipart/form-data">')
 				.addClass('md-upload-dialog')
 				.attr('action', MD_UPLOAD_URL),
-			$url_input = $('<input type="text" name="url" id="md-upload-url" />')
+			$file_info = $('<div id="md-file-info">').css('float','right').css({
+					width: '200px',
+					height: '200px',
+					padding: '5px',
+					marginLeft: '10px'
+				}),
+			$url_input = $('<textarea rows="2" cols="40" name="url" id="md-upload-url" />')
 				.change(function () { updateForm(this) }),
 			$url_label = $('<label>').html("File URL :"),
-			$title_input = $('<input type="text" name="title" id="md-upload-title" />'),
+			$title_input = $('<textarea rows="2" cols="40" name="title" id="md-upload-title" />'),
 			$title_label = $('<label>').html("Title:"),
-			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
-				.change(UploadFile),
+			$upload_input = $('<input type="file" name="file" id="md-upload-file" />'),
 			$insert_button = $('<input type="submit" value="Insert" />').click(triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
 		$upload_label.append($upload_input);
 		$title_label.append($title_input);
+		$upload_form.append($file_info);
 		$upload_form.append($("<p>").append($upload_label));
 		$upload_form.append($("<p>").append($url_label));
 		$upload_form.append($("<p>").append($title_label));
 		$upload_form.append($("<p>").append($insert_button));
 		$upload_form.appendTo('body');
+		$('#md-upload-file').live('change', UploadFile);
 		$upload_form.dialog({ modal: true, width: 650 });
 	},
 	imageDialog: function(markItUp) {
@@ -200,10 +207,10 @@ MarkdownUpload = {
 			$upload_form = $('<form enctype="multipart/form-data">')
 				.addClass('md-upload-dialog')
 				.attr('action', MD_UPLOAD_URL),
-			$url_input = $('<input type="text" name="url" id="md-upload-url" />')
+			$url_input = $('<textarea rows="2" cols="40" name="url" id="md-upload-url" />')
 				.change(function () { updateForm(this) }),
 			$url_label = $('<label>').html("Image URL :"),
-			$alt_input = $('<input type="text" name="alt" id="md-upload-alt" />'),
+			$alt_input = $('<textarea rows="2" cols="40" name="alt" id="md-upload-alt" />'),
 			$alt_label = $('<label>').html("Alt text:"),
 //			$title_input = $('<input type="text" name="title" id="md-upload-title" />'),
 //			$title_label = $('<label>').html("Title:"),
@@ -215,8 +222,7 @@ MarkdownUpload = {
 					padding: '5px',
 					marginLeft: '10px'
 				}),
-			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
-				.change(UploadFile),
+			$upload_input = $('<input type="file" name="file" id="md-upload-file" />');
 			$insert_button = $('<input type="submit" value="Insert" />').click(triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
@@ -230,6 +236,7 @@ MarkdownUpload = {
 		$upload_form.append($("<p>").append($alt_label));
 //		$upload_form.append($("<p>").append($title_label));
 		$upload_form.append($("<p>").append($insert_button));
+		$('#md-upload-file').live('change', UploadFile);
 		$upload_form.appendTo('body');
 		$upload_form.dialog({ modal: true, width: 650 });
 	}
