@@ -60,3 +60,7 @@
 .md-upload-dialog label {
 	display: block;
 }
+
+.md-upload-dialog textarea {
+	display: block;
+}
