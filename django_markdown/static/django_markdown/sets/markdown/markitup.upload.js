@@ -91,7 +91,9 @@ function UploadFile(event) {
 				alert(e);
 			}
 		}
-	)
+	);
+	$empty_el = $(this).clone(false, false);
+	$(this).replaceWith($empty_el);
 }
 
 MarkdownUpload = {
@@ -100,6 +102,11 @@ MarkdownUpload = {
 			$title=$(form).find("input[name='title']"),
 			title = "";
 		$(form).find("#md-upload-url").val(data.url);
+		result = "";
+		for (obj in data) {
+			result += "\n" + obj + ": " + data[obj] + " (" + typeof data[obj] + ")";
+		}
+		alert result;
 //		title = "File: data.file"
 //		if (data.size) {
 //			title += " [" + bytesToSize(data.size) + "]";
@@ -113,10 +120,10 @@ MarkdownUpload = {
 //				.appendTo($preview);
 //		}
 //		$title.val(title);
-		updateForm(form, data.url, data.size);
+		MarkdownUpload.updateForm(form, data.url, data.size);
 	},
 	updateForm: function(form, url, size) {
-		var size={},
+		var size_holder={},
 			$form = $(form)
 			$preview=$(form).find('#md-image-preview'),
 			$title=$(form).find("input[name='title']"),
@@ -172,7 +179,7 @@ MarkdownUpload = {
 			$title_input = $('<input type="text" name="title" id="md-upload-title" />'),
 			$title_label = $('<label>').html("Title:"),
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
-				.change(UploadFile),
+				.click(UploadFile),
 			$insert_button = $('<input type="submit" value="Insert" />').click(triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
@@ -216,7 +223,7 @@ MarkdownUpload = {
 					marginLeft: '10px'
 				}),
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
-				.change(UploadFile),
+				.click(UploadFile),
 			$insert_button = $('<input type="submit" value="Insert" />').click(triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
