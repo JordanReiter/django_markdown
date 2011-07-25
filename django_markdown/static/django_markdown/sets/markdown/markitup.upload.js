@@ -95,11 +95,6 @@ function UploadFile(event) {
 			}
 		}
 	);
-<<<<<<< HEAD
-=======
-	$empty_el = $(this).clone(false, false);
-	$(this).replaceWith($empty_el);
->>>>>>> 92c6470261a330d187f301135deddc54965446f8
 }
 
 MarkdownUpload = {
@@ -108,27 +103,6 @@ MarkdownUpload = {
 			$title=$(form).find(":input[name='title']"),
 			title = "";
 		$(form).find("#md-upload-url").val(data.url);
-<<<<<<< HEAD
-=======
-		result = "";
-		for (obj in data) {
-			result += "\n" + obj + ": " + data[obj] + " (" + typeof data[obj] + ")";
-		}
-		alert result;
-//		title = "File: data.file"
-//		if (data.size) {
-//			title += " [" + bytesToSize(data.size) + "]";
-//		}
-//		if ($preview.length) {
-//			$('<img src="' + data.url + '">')
-//				.css({
-//					maxWidth: '200px',
-//					maxHeight: '200px'
-//				})
-//				.appendTo($preview);
-//		}
-//		$title.val(title);
->>>>>>> 92c6470261a330d187f301135deddc54965446f8
 		MarkdownUpload.updateForm(form, data.url, data.size);
 	},
 	updateForm: function(form, url, size) {
@@ -203,12 +177,7 @@ MarkdownUpload = {
 			$url_label = $('<label>').html("File URL :"),
 			$title_input = $('<textarea rows="2" cols="40" name="title" id="md-upload-title" />'),
 			$title_label = $('<label>').html("Title:"),
-<<<<<<< HEAD
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />'),
-=======
-			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
-				.click(UploadFile),
->>>>>>> 92c6470261a330d187f301135deddc54965446f8
 			$insert_button = $('<input type="submit" value="Insert" />').click(triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
@@ -253,12 +222,7 @@ MarkdownUpload = {
 					padding: '5px',
 					marginLeft: '10px'
 				}),
-<<<<<<< HEAD
 			$upload_input = $('<input type="file" name="file" id="md-upload-file" />');
-=======
-			$upload_input = $('<input type="file" name="file" id="md-upload-file" />')
-				.click(UploadFile),
->>>>>>> 92c6470261a330d187f301135deddc54965446f8
 			$insert_button = $('<input type="submit" value="Insert" />').click(triggerInsert),
 			$upload_label = $('<label>').html("Upload :");
 		$url_label.append($url_input);
