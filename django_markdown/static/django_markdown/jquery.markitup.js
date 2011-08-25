@@ -43,6 +43,7 @@
 					beforeInsert:			'',
 					afterInsert:			'',
 					onEnter:				{},
+					onSpace:				{},
 					onShiftEnter:			{},
 					onCtrlEnter:			{},
 					onTab:					{},
@@ -548,6 +549,10 @@
 							markup(options.onEnter);
 							return options.onEnter.keepDefault;
 						}
+					}
+					if (e.keyCode == 32) {
+						markup(options.onSpace);
+						return options.onSpace.keepDefault;
 					}
 					if (e.keyCode === 9) { // Tab key
 						if (shiftKey == true || ctrlKey == true || altKey == true) {
