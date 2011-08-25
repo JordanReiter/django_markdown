@@ -5,12 +5,15 @@ from django.conf import settings
 from django.core.files.storage import safe_join
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+
 #try:
 #    import json
 #except ImportError:
 #    from django.utils.simplejson import simplejson as json  
 import json
 
+@csrf_exempt
 def preview(request):
     return direct_to_template(
             request, 'django_markdown/preview.html',
