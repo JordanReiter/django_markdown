@@ -33,7 +33,7 @@ mySettings = {
 		{name:'File', className:"file-button", replaceWith: function(miu) { MarkdownUpload.fileDialog(miu) }},
 		{name:'Link', className: 'link-button', key:'L', openWith:'[', closeWith:']([![Url:!:http://]!] "[![Title]!]")', placeHolder:'Your text to link here...' },
 		{separator:'---------------'},	
-		{name:'Quotes', className: 'quote-button', openWith:'> '},
+		{name:'Quotes', className: 'quotes-button', openWith:'> '},
 //		{name:'Code Block / Code', openWith:'(!(\t|!|`)!)', closeWith:'(!(`)!)'},
 		{separator:'---------------'},
 		{name:'Preview', call:'preview', className:"preview"}
