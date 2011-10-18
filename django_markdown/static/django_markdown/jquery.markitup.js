@@ -472,6 +472,7 @@
 			// refresh Preview window
 			function refreshPreview() {
  				renderPreview();
+				$$.trigger("refreshPreview");
 			}
 
 			function renderPreview() {		
