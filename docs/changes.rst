@@ -1,1 +1,4 @@
-../ChangeLog.txt
+CHANGES
+=======
+
+.. include:: ../Changelog

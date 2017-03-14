@@ -11,30 +11,29 @@
 // Feel free to add more tags
 // -------------------------------------------------------------------
 mySettings = {
-	previewParserPath:	'',
 	onShiftEnter:		{keepDefault:false, openWith:'\n\n'},
 	markupSet: [
-		{name:'First Level Heading', className: 'h1-button', key:'1', placeHolder:'Your title here...', closeWith:function(markItUp) { return miu.markdownTitle(markItUp, '=') } },
-		{name:'Second Level Heading', className: 'h2-button', key:'2', placeHolder:'Your title here...', closeWith:function(markItUp) { return miu.markdownTitle(markItUp, '-') } },
-		{name:'Heading 3', key:'3', className: 'h3-button', openWith:'### ', placeHolder:'Your title here...' },
-		{name:'Heading 4', key:'4', className: 'h4-button', openWith:'#### ', placeHolder:'Your title here...' },
-		{name:'Heading 5', key:'5', className: 'h5-button', openWith:'##### ', placeHolder:'Your title here...' },
-		{name:'Heading 6', key:'6', className: 'h6-button', openWith:'###### ', placeHolder:'Your title here...' },
-		{separator:'---------------' },		
-		{name:'Bold', className: 'bold-button', key:'B', openWith:'**', closeWith:'**'},
-		{name:'Italic', className: 'italic-button', key:'I', openWith:'_', closeWith:'_'},
+		{name:'First Level Heading', key:'1', placeHolder:'Your title here...', closeWith:function(markItUp) { return miu.markdownTitle(markItUp, '=') } },
+		{name:'Second Level Heading', key:'2', placeHolder:'Your title here...', closeWith:function(markItUp) { return miu.markdownTitle(markItUp, '-') } },
+		{name:'Heading 3', key:'3', openWith:'### ', placeHolder:'Your title here...' },
+		{name:'Heading 4', key:'4', openWith:'#### ', placeHolder:'Your title here...' },
+		{name:'Heading 5', key:'5', openWith:'##### ', placeHolder:'Your title here...' },
+		{name:'Heading 6', key:'6', openWith:'###### ', placeHolder:'Your title here...' },
 		{separator:'---------------' },
-		{name:'Bulleted List', className: 'ul-button', openWith:'- ' },
-		{name:'Numeric List', className: 'ol-button', openWith:function(markItUp) {
+		{name:'Bold', key:'B', openWith:'**', closeWith:'**'},
+		{name:'Italic', key:'I', openWith:'_', closeWith:'_'},
+		{separator:'---------------' },
+		{name:'Bulleted List', openWith:'- ' },
+		{name:'Numeric List', openWith:function(markItUp) {
 			return markItUp.line+'. ';
 		}},
 		{separator:'---------------' },
-		{name:'Picture', className: 'picture-button', key:'P', replaceWith: function(miu) { MarkdownUpload.imageDialog(miu) }},
-		{name:'File', className:"file-button", replaceWith: function(miu) { MarkdownUpload.fileDialog(miu) }},
-		{name:'Link', className: 'link-button', key:'L', openWith:'[', closeWith:']([![Url:!:http://]!] "[![Title]!]")', placeHolder:'Your text to link here...' },
-		{separator:'---------------'},	
-		{name:'Quotes', className: 'quotes-button', openWith:'> '},
-//		{name:'Code Block / Code', openWith:'(!(\t|!|`)!)', closeWith:'(!(`)!)'},
+		{name:'Picture', key:'P', replaceWith: function(markItUp) { MarkdownUpload.imageDialog(markItUp) }},
+		{name:'File', key:'F', replaceWith: function(markItUp) { console.log("About to replace with ", markItUp); MarkdownUpload.fileDialog(markItUp) }},
+		{name:'Link', key:'L', openWith:'[', closeWith:']([![Url:!:http://]!] "[![Title]!]")', placeHolder:'Your text to link here...' },
+		{separator:'---------------'},
+		{name:'Quotes', openWith:'> '},
+		{name:'Code Block / Code', openWith:'(!(\t|!|`)!)', closeWith:'(!(`)!)'},
 		{separator:'---------------'},
 		{name:'Preview', call:'preview', className:"preview"}
 	]
@@ -42,11 +41,13 @@ mySettings = {
 
 // mIu nameSpace to avoid conflict.
 miu = {
-	markdownTitle: function(markItUp, char) {
+	markdownTitle: function(markItUp, achar) {
 		heading = '';
-		n = $.trim(markItUp.selection||markItUp.placeHolder).length;
+		n = jQuery.trim(markItUp.selection||markItUp.placeHolder).length;
+		// work around bug in python-markdown where header underlines must be at least 3 chars
+		if (n < 3) { n = 3; }
 		for(i = 0; i < n; i++) {
-			heading += char;
+			heading += achar;
 		}
 		return '\n'+heading;
 	}

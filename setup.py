@@ -1,54 +1,62 @@
+""" Setup Django-Markdown. """
+
 import os
 
 from setuptools import setup, find_packages
-
-from django_markdown import version, PROJECT, LICENSE
+import re
 
 
 MODULE_NAME = 'django_markdown'
 PACKAGE_DATA = list()
 
-for directory in [ 'templates', 'static' ]:
-    for root, dirs, files in os.walk( os.path.join( MODULE_NAME, directory )):
+for directory in ['templates', 'static']:
+    for root, dirs, files in os.walk(os.path.join(MODULE_NAME, directory)):
         for filename in files:
-            PACKAGE_DATA.append("%s/%s" % ( root[len(MODULE_NAME)+1:], filename ))
+            PACKAGE_DATA.append("%s/%s" %
+                                (root[len(MODULE_NAME) + 1:], filename))
 
 
-def read( fname ):
+def _read(fname):
     try:
-        return open( os.path.join( os.path.dirname( __file__ ), fname ) ).read()
+        return open(os.path.join(os.path.dirname(__file__), fname)).read()
     except IOError:
         return ''
 
+_meta = _read('django_markdown/__init__.py')
+_license = re.search(r'^__license__\s*=\s*"(.*)"', _meta, re.M).group(1)
+_project = re.search(r'^__project__\s*=\s*"(.*)"', _meta, re.M).group(1)
+_version = re.search(r'^__version__\s*=\s*"(.*)"', _meta, re.M).group(1)
 
-META_DATA = dict(
-    name = PROJECT,
-    version = version,
-    description = read('DESCRIPTION'),
-    long_description = read('README.rst'),
-    license=LICENSE,
+install_requires = [l for l in _read('requirements.txt').split('\n')
+                    if l and not l.startswith('#')]
 
-    author = "Kirill Klenov",
-    author_email = "horneds@gmail.com",
-    url = "http://github.com/klen/django-markdown.git",
+setup(
+    name=_project,
+    version=_version,
+    description=_read('DESCRIPTION'),
+    long_description=_read('README.rst'),
+    license=_license,
 
-    keywords= 'html markdown django',
+    author="Kirill Klenov",
+    author_email="horneds@gmail.com",
+    url="https://github.com/klen/django_markdown",
+
+    keywords='html markdown django',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
         'Natural Language :: Russian',
         'Natural Language :: English',
-        'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
+        'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)', # noqa
         'Programming Language :: Python',
         'Topic :: Software Development :: Code Generators',
         'Topic :: Text Processing :: Markup',
     ],
 
-    packages = find_packages(),
-    package_data = { '': PACKAGE_DATA, },
+    packages=find_packages(),
+    package_data={'': PACKAGE_DATA, },
 
-    install_requires = [ 'markdown' ],
+    install_requires=install_requires,
 )
 
-if __name__ == "__main__":
-    setup( **META_DATA )
+# pylama:ignore=C0111

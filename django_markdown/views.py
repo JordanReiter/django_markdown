@@ -1,75 +1,63 @@
-from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseNotAllowed
-from django.shortcuts import render_to_response
-from django.views.generic.simple import direct_to_template
-from django.conf import settings
-from django.core.files.storage import safe_join
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-
-#try:
-#    import json
-#except ImportError:
-#    from django.utils.simplejson import simplejson as json  
+""" Supports preview. """
+import time
+import os
 import json
 
-@csrf_exempt
+from django.core.files.storage import default_storage, safe_join
+from django.http import HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+from django.shortcuts import render
+
+from . import settings
+
 def preview(request):
-    return direct_to_template(
-            request, 'django_markdown/preview.html',
-            content=request.REQUEST.get('data', 'No content posted'))
+    """ Render preview page.
+    :returns: A rendered preview
+    """
+    if settings.MARKDOWN_PROTECT_PREVIEW:
+        user = getattr(request, 'user', None)
+        if not user or not user.is_staff:
+            from django.contrib.auth.views import redirect_to_login
+            return redirect_to_login(request.get_full_path())
 
-def manual(request):
-    if request.method == 'POST':
-        for field_name in request.FILES:
-            uploaded_file = request.FILES[field_name]
-
-            # write the file into /tmp
-            destination_path = '/tmp/%s' % (uploaded_file.name)
-            destination = open(destination_path, 'wb+')
-            for chunk in uploaded_file.chunks():
-                destination.write(chunk)
-            destination.close()
-
-        # indicate that everything is OK for SWFUpload
-        return HttpResponse("ok", mimetype="text/plain")
-
-    else:
-        # show the upload UI
-        return render_to_response('uploads/manual.html')
+    return render(
+        request, settings.MARKDOWN_PREVIEW_TEMPLATE, dict(
+            content=request.REQUEST.get('data', 'No content posted'),
+            css=settings.MARKDOWN_STYLE
+        ))
 
 @csrf_exempt
-@login_required
-def upload(request, path="uploads"):
-    if request.method == 'POST':
-        path = request.POST.get('path', path)
-        if len(request.FILES) != 1:
-            return HttpResponseBadRequest("Must upload one and only file at a time.")
-        for field_name in request.FILES:
-            uploaded_file = request.FILES[field_name]
-
-            # write the file into /tmp
-            try:
-                destination_folder = safe_join(settings.MEDIA_ROOT, path)
-            except ValueError:
-                return HttpResponseBadRequest("This usually only happens when you supply an invalid value for the path.")
-            try:
-                destination_path = '%s/%s' % (destination_folder, uploaded_file.name)
-                destination = open(destination_path, 'wb+')
-                for chunk in uploaded_file.chunks():
-                    destination.write(chunk)
-                destination.close()
-            except Exception, inst:
-                raise Exception("Some kind of error: %s" % inst)
-
-            data = {
-                'file': uploaded_file.name,
-                'url': '%s/%s/%s' % (settings.MEDIA_URL, path, uploaded_file.name),
-                'type': uploaded_file.content_type,
-                'size': uploaded_file.size
-            } 
-
-            # indicate that everything is OK for SWFUpload
-            return HttpResponse(json.dumps(data))
-    else:
+def upload(request, path=None, storage=None):
+    storage = storage or settings.MARKDOWN_STORAGE
+    path = path or settings.MARKDOWN_UPLOAD_PATH
+    if not request.user.is_authenticated():
+        return HttpResponseForbidden("You must be logged in to upload files.")
+    if request.method != 'POST':
         return HttpResponseNotAllowed("Only allowed to POST items.")
+    path = request.POST.get('path', path)
+    if len(request.FILES) != 1:
+        return HttpResponseBadRequest("Must upload one and only file at a time.")
+    for field_name in request.FILES:
+        uploaded_file = request.FILES[field_name]
+
+    try:
+        safe_join(os.path.basename(__file__), path)
+    except ValueError:
+        return HttpResponseBadRequest("This usually only happens when you supply an invalid value for the path.")
+    filename = uploaded_file.name
+    file_prefix, ext = os.path.splitext(filename)
+    if storage.exists(filename): # don't overwrite files
+        filename = '{file}_{ts}.{ext}'.format(file=file_prefix, ts=int(time.time()), ext=ext)
+    destination_path = os.path.join(path, filename)
+    storage.save(destination_path, uploaded_file)
+
+    data = {
+        'file': filename,
+        'url': storage.url(destination_path),
+        'type': uploaded_file.content_type,
+        'size': uploaded_file.size
+    }
+
+    return HttpResponse(json.dumps(data))
+

@@ -12,18 +12,18 @@
 	text-decoration:none;
 }
 .markItUp  {
+	width:700px;
 	margin:5px 0 5px 0;
 }
 .markItUpContainer  {
-    overflow: visible;
+	font:11px Verdana, Arial, Helvetica, sans-serif;
 }
 .markItUpEditor {
-    overflow: visible;
-    font-family: Arial,Helvetica,sans-serif;
-    font-size: 1.3rem;
+	font:12px 'Courier New', Courier, monospace;
 	padding:5px;
-	width:96%;
-	clear:both; display:block;
+	width:690px;
+	height:320px;
+	clear:both;
 	line-height:18px;
 	overflow:auto;
 }
@@ -115,9 +115,4 @@
 .markItUpHeader ul ul a:hover  {
 	color:#FFF;
 	background-color:#000;
-}
-.markdown {
-    float:left; 
-    margin: 2px 0 10px 2%;
-    overflow: visible;
 }

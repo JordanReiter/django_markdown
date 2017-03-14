@@ -1,48 +1,71 @@
+""" Widgets for django-markdown. """
+import os
+
 from django import forms
-from django.conf import settings
+from django.contrib.admin.widgets import AdminTextareaWidget
+from django.core.files.storage import default_storage
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
-from django.utils import simplejson
+
+from . import settings
+from .utils import editor_js_initialization
+
 
 class MarkdownWidget(forms.Textarea):
 
-    def __init__(self, *args, **kwargs):
+    """ Widget for a textarea.
+
+    Takes two additional optional keyword arguments:
+
+    ``markdown_set_name``
+        Name for current set. Default: value of MARKDOWN_SET_NAME setting.
+
+    ``markdown_skin``
+        Name for current skin. Default: value of MARKDOWN_EDITOR_SKIN setting.
+
+    """
+
+    def __init__(self, attrs=None, **kwargs):
         self.path = kwargs.pop('path', None)
-        super(MarkdownWidget, self).__init__(*args, **kwargs)
-    
-    class Media:
-        js = (
-            ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/jquery.markitup.js',
-            ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/ajaxfileupload.js',
-            ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/sets/markdown/set.js',
-            ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/sets/markdown/markitup.upload.js',
+        super(MarkdownWidget, self).__init__(attrs)
+
+    def render(self, name, value, attrs=None):
+        """ Render widget.
+
+        :returns: A rendered HTML
+
+        """
+        html = super(MarkdownWidget, self).render(name, value, attrs)
+        if self.path:
+            upload_url = reverse('django_markdown_upload_with_path', kwargs={'path': self.path})
+        else:
+            upload_url = reverse('django_markdown_upload')
+        attrs = self.build_attrs(attrs)
+        html += editor_js_initialization(
+            "#%s" % attrs['id'],
+            upload_url=upload_url
         )
+        return mark_safe(html)
+
+    class Media:
         css = {
             'screen': (
-                ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/skins/simple/style.css',
-                ( settings.STATIC_URL or settings.MEDIA_URL ) + 'django_markdown/sets/markdown/style.css',
+                os.path.join('django_markdown', 'skins', settings.MARKDOWN_EDITOR_SKIN, 'style.css'),
+                os.path.join(settings.MARKDOWN_SET_PATH, settings.MARKDOWN_SET_NAME, 'style.css')
             )
         }
 
-    def render(self, name, value, attrs=None):
-        html = super(MarkdownWidget, self).render(name, value, attrs)
+        js = (
+            os.path.join('django_markdown', 'jquery.init.js'),
+            os.path.join('django_markdown', 'jquery.markitup.js'),
+            os.path.join('django_markdown', 'ajaxfileupload.js'),
+            os.path.join(settings.MARKDOWN_SET_PATH, settings.MARKDOWN_SET_NAME, 'markitup.upload.js'),
+            os.path.join(settings.MARKDOWN_SET_PATH, settings.MARKDOWN_SET_NAME, 'set.js')
+        )
 
-        editor_settings = getattr(settings, 'MARKDOWN_EDITOR_SETTINGS', {})
-        editor_settings['previewParserPath'] = reverse('django_markdown_preview')
 
-        upload_path = self.path or getattr(settings, 'MARKDOWN_UPLOAD_PATH', None)
-        if upload_path:
-            upload_url = reverse('django_markdown_upload_with_path', kwargs={'path': upload_path})
-        else:
-            upload_url = reverse('django_markdown_upload')
+class AdminMarkdownWidget(MarkdownWidget, AdminTextareaWidget):
 
-        html += """
-<script type="text/javascript">
-dmd_miu_settings=mySettings;
-dmd_miu_settings['previewParserPath']="%s";
-$(\'#%s\').markItUp(dmd_miu_settings);
-MD_UPLOAD_URL="%s";
-</script>
-""" % (reverse('django_markdown_preview'), attrs['id'], upload_url)
+    """ Support markdown widget in Django Admin. """
 
-        return mark_safe(html)
+    pass
